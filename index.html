@@ -143,4 +143,36 @@ document.addEventListener('submit',e=>{if(e.target.id!='f')return;e.preventDefau
 const msg=tr(`مرحبًا أسماء،\nأرغب في الحجز.\n\nالاسم: ${g('n')}\nالعمر: ${g('a')}${gd}\nالخدمة: ${nm}\nنوع الجلسة: ${md}\nاليوم المناسب: ${g('dy')}\nالوقت المناسب: ${g('tm')}\nنبذة: ${g('nt')}`,`Hello Asma,\nI’d like to book.\n\nName: ${g('n')}\nAge: ${g('a')}${gd}\nService: ${nm}\nFormat: ${md}\nPreferred day: ${g('dy')}\nPreferred time: ${g('tm')}\nNote: ${g('nt')}`);
 const pv=$('#pv');pv.hidden=false;pv.textContent=msg;const u=wa(msg);if(u)window.open(u,'_blank');else toast()});
 render();
-</script></body></html>
+</script></body></html> 
+<script>
+(function(){
+  function fix(u){
+    var m = String(u).match(/wa\.me\/(\d+)\/?(?:\?text=([^&#]*))?/);
+    if(!m) return null;
+    var t = m[2] ? '&text=' + m[2] : '';
+    return {
+      app: 'whatsapp://send?phone=' + m[1] + t,
+      web: 'https://api.whatsapp.com/send?phone=' + m[1] + t
+    };
+  }
+  function go(l){
+    location.href = l.app;
+    setTimeout(function(){ if(!document.hidden) location.href = l.web; }, 1500);
+  }
+  var o = window.open;
+  window.open = function(u){
+    var l = fix(u);
+    if(l){ go(l); return window; }
+    return o.apply(window, arguments);
+  };
+  document.addEventListener('click', function(e){
+    var a = e.target.closest && e.target.closest('a[href*="wa.me"]');
+    if(!a) return;
+    var l = fix(a.href);
+    if(!l) return;
+    e.preventDefault(); e.stopPropagation(); go(l);
+  }, true);
+})();
+</script>
+
+
